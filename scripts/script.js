@@ -5,6 +5,30 @@ const phone = document.querySelector('.phone');
 const email = document.querySelector('.email');
 const friends = document.getElementById('friends');
 
+const button = document.querySelector('button');
+const input = document.querySelector('input');
+const replies = document.querySelector('.replies');
+
+button.addEventListener('click', addReply);
+input.addEventListener('keydown', (e) => {
+    if (e.which == 13) {
+        addReply();
+    }
+});
+
+function addReply() {
+    const text = input.value.trim();
+
+    if (!text.length) {
+        return;
+    }
+    const reply = document.createElement('div');
+    reply.classList.add('reply');
+    reply.innerHTML = `<p>${text}</p>`;
+    replies.appendChild(reply);
+    input.value = null;
+}
+
 let xhr = new XMLHttpRequest();
 
 xhr.onreadystatechange = () => {
