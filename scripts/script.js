@@ -2,10 +2,12 @@ const xhr = new XMLHttpRequest();
 
 xhr.onreadystatechange = function() {
     if (xhr.status == 200 && xhr.readyState == 4) {
-        console.log(xhr.responseText);
+        const response = JSON.parse(xhr.responseText);
+        const photos = response.photos;
+        console.log(photos);
     }
 };
 
-const url = '/hello';
+const url = '/photos';
 xhr.open('GET', url, true);
 xhr.send(null);
