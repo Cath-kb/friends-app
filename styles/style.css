@@ -38,7 +38,7 @@ body {
 
 #bio {
     text-align: center;
-    font-family: georgia;
+    font-family: Georgia, 'Century Schoolbook L', serif;
     width: 100%;
     word-break: break-word;
     padding: 1em;
@@ -83,8 +83,8 @@ body {
     background-color: #fff;
     display: flex;
     flex-direction: column;
-    border-left: 1px solid #ededed;
     border: 2px solid #ededed;
+    border-left-width: 1px;
     box-sizing: border-box;
 }
 
