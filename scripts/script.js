@@ -1,10 +1,3 @@
-const gallery = document.getElementById('gallery');
-const avatar = document.querySelector('.avatar');
-const name = document.querySelector('.name');
-const phone = document.querySelector('.phone');
-const email = document.querySelector('.email');
-const friends = document.getElementById('friends');
-
 const button = document.querySelector('button');
 const input = document.querySelector('input');
 const replies = document.querySelector('.replies');
@@ -29,57 +22,67 @@ function addReply() {
     input.value = null;
 }
 
-let xhr = new XMLHttpRequest();
+function drawPhotos(photos) {
+    const gallery = document.getElementById('gallery');
 
-xhr.onreadystatechange = () => {
-    if (xhr.status == 200 && xhr.readyState == 4) {
-        const response = JSON.parse(xhr.responseText);
-        const photos = response.photos;
-        photos.forEach((photo) => {
-            const div = document.createElement('div');
-            const img = document.createElement('img');
+    photos.forEach(drawPhoto);
 
-            div.classList.add('photo');
-            img.src = photo.url;
+    function drawPhoto(photo) {
+        const container = document.createElement('div');
+        const img = document.createElement('img');
 
-            div.appendChild(img);
-            gallery.appendChild(div);
-        });
+        container.classList.add('photo');
+        img.src = photo.url;
 
-        xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = () => {
-            if (xhr.status == 200 && xhr.readyState == 4) {
-                const response = JSON.parse(xhr.responseText);
-                const profile = response.results[0];
-                avatar.src = profile.picture.large;
-                name.textContent = `${profile.name.first} ${profile.name.last}`;
-                phone.textContent = profile.cell;
-                email.textContent = profile.email;
-
-                xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = () => {
-                    if (xhr.status == 200 && xhr.readyState == 4) {
-                        const response = JSON.parse(xhr.responseText);
-                        const friendList = response.results;
-                        friendList.forEach((friend) => {
-                            const div = document.createElement('div');
-                            const img = document.createElement('img');
-                            div.classList.add('friend');
-                            img.src = friend.picture.large;
-                            div.appendChild(img);
-                            friends.appendChild(div);
-                        });
-                    }
-                };
-                xhr.open('GET', 'https://randomuser.me/api/?results=15', true);
-                xhr.send(null);
-            }
-        };
-        xhr.open('GET', 'https://randomuser.me/api/', true);
-        xhr.send(null);
+        container.appendChild(img);
+        gallery.appendChild(container);
     }
-};
+}
 
-const url = '/photos';
-xhr.open('GET', url, true);
-xhr.send(null);
+function drawProfile(profile) {
+    const avatar = document.querySelector('.avatar');
+    const name = document.querySelector('.name');
+    const phone = document.querySelector('.phone');
+    const email = document.querySelector('.email');
+
+    avatar.src = profile.picture.large;
+    name.textContent = `${profile.name.first} ${profile.name.last}`;
+    phone.textContent = profile.cell;
+    email.textContent = profile.email;
+}
+
+function drawFriends(friendList) {
+    const friends = document.getElementById('friends');
+
+    friendList.forEach((friend) => {
+        const container = document.createElement('div');
+        const img = document.createElement('img');
+        container.classList.add('friend');
+        img.src = friend.picture.large;
+        container.appendChild(img);
+        friends.appendChild(container);
+    });
+}
+
+function get(url, callback) {
+    const xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            callback(JSON.parse(xhr.responseText));
+        }
+    };
+
+    xhr.open('GET', url, true);
+    xhr.send(null);
+}
+
+get('/photos', (response) => {
+    drawPhotos(response.photos);
+    get('https://randomuser.me/api/', (response) => {
+        drawProfile(response.results[0]);
+        get('https://randomuser.me/api/?results=15', (response) => {
+            drawFriends(response.results);
+        });
+    });
+});
