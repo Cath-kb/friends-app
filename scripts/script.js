@@ -78,6 +78,14 @@ function drawPhotos(photos) {
 }
 
 function drawProfile(profile) {
+    //let cloned = document.getElementById('profile').cloneNode(true);
+    //let parent = document.getElementById('application');
+    //
+    //let avatar = cloned.querySelector('.avatar');
+    //let name = cloned.querySelector('.name');
+    //let phone = cloned.querySelector('.phone');
+    //let email = cloned.querySelector('.email');
+    
     const avatar = document.querySelector('.avatar');
     const name = document.querySelector('.name');
     const phone = document.querySelector('.phone');
@@ -87,6 +95,8 @@ function drawProfile(profile) {
     name.textContent = `${profile.name.first} ${profile.name.last}`;
     phone.textContent = profile.cell;
     email.textContent = profile.email;
+
+    //parent.replaceChild(cloned, document.getElementById('profile'));
 }
 
 function drawFriends(friendList) {

@@ -3,3 +3,6 @@ node_modules/
 
 #ignore JetBrain's IDEs
 /.idea
+
+#ignore uploads
+uploads/
