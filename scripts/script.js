@@ -56,9 +56,14 @@ function addReply() {
 }
 
 function drawPhotos(photos) {
-    const gallery = document.getElementById('gallery');
+    let gallery = document.createElement('div');
+    let parent = document.getElementById('ribbon');
+    
+    gallery.id = 'gallery';
 
     photos.forEach(drawPhoto);
+    
+    parent.replaceChild(gallery, document.getElementById('gallery'));
 
     function drawPhoto(photo) {
         const container = document.createElement('div');
