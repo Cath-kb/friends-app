@@ -10,7 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.14.1"
+    "express": "^4.14.1",
+    "formidable": "^1.1.1"
   },
   "devDependencies": {
     "supervisor": "^0.12.0"

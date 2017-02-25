@@ -27,8 +27,19 @@ function onError(e) {
     throw new Error(e.message);
 }
 
-function uploadPhoto(data) {
+function uploadPhoto(photo) {
+    let container = {
+        url: '/photos',
+        resolve: onSuccess,
+        reject: onError,
+        data: photo
+    };
 
+    function onSuccess(response) {
+        console.log(response);
+    }
+
+    post(container);
 }
 
 function addReply() {
@@ -94,7 +105,7 @@ function post(params) {
 
     xhr.onreadystatechange = () => {
         if (xhr.readyState == 4 && xhr.status == 200) {
-            resolve(JSON.parse(xhr.responseText));
+            params.resolve(JSON.parse(xhr.responseText));
         }
     };
 
