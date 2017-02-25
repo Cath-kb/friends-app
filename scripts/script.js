@@ -55,7 +55,8 @@ function addReply() {
     input.value = null;
 }
 
-function drawPhotos(photos) {
+function drawPhotos(response) {
+    const photos = response.photos;
     let gallery = document.createElement('div');
     let parent = document.getElementById('ribbon');
     
@@ -77,7 +78,8 @@ function drawPhotos(photos) {
     }
 }
 
-function drawProfile(profile) {
+function drawProfile(response) {
+    const profile = response.results[0];
     //let cloned = document.getElementById('profile').cloneNode(true);
     //let parent = document.getElementById('application');
     //
@@ -99,7 +101,8 @@ function drawProfile(profile) {
     //parent.replaceChild(cloned, document.getElementById('profile'));
 }
 
-function drawFriends(friendList) {
+function drawFriends(response) {
+    const friendList = response.results;
     const friends = document.getElementById('friends');
 
     friendList.forEach((friend) => {
@@ -128,48 +131,25 @@ function post(params) {
     xhr.send(formData);
 }
 
-function get(url, resolve, reject) {
-    const xhr = new XMLHttpRequest();
+function get(url) {
+    return new Promise(function (resolve, reject) {
+        const xhr = new XMLHttpRequest();
 
-    xhr.onreadystatechange = () => {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            resolve(JSON.parse(xhr.responseText));
-        }
-    };
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                resolve(JSON.parse(xhr.responseText));
+            }
+        };
 
-    xhr.onerror = reject;
+        xhr.onerror = reject;
 
-    xhr.open('GET', url, true);
-    xhr.send(null);
+        xhr.open('GET', url, true);
+        xhr.send(null);
+    })
 }
 
-get('/photos', (response) => {
-    drawPhotos(response.photos);
-    get('https://randomuser.me/api/', (response) => {
-        drawProfile(response.results[0]);
-        get('https://randomuser.me/api/?results=15', (response) => {
-            drawFriends(response.results);
-        }, onError);
-    }, onError);
-}, onError);
+const getPhotos = () => get('/photos').then(drawPhotos);
+const getMe = () => get('https://randomuser.me/api/').then(drawProfile);
+const getFriends = () => get('https://randomuser.me/api/?results=15').then(drawFriends);
 
-let p1 = new Promise(function(resolve, reject) {
-    setTimeout(someFunc, 1500);
-    function someFunc() {
-        if(true) {
-            resolve(true);
-        } else {
-            reject()
-        }
-    }
-});
-
-p1.then(onResolve, onReject);
-
-function onResolve(response) {
-    console.log('onResolve: ', response);
-}
-
-function onReject(response) {
-    console.log('onReject: ', response);
-}
+getPhotos().then(getMe).then(getFriends);
