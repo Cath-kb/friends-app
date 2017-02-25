@@ -9,6 +9,10 @@ input.addEventListener('keydown', (e) => {
     }
 });
 
+function onError(e) {
+    throw new Error(e.message);
+}
+
 function addReply() {
     const text = input.value.trim();
 
@@ -72,6 +76,10 @@ function get(url, callback) {
             callback(JSON.parse(xhr.responseText));
         }
     };
+    
+    xhr.onerror = (e) => {
+        onError(e)
+    };
 
     xhr.open('GET', url, true);
     xhr.send(null);
@@ -83,6 +91,6 @@ get('/photos', (response) => {
         drawProfile(response.results[0]);
         get('https://randomuser.me/api/?results=15', (response) => {
             drawFriends(response.results);
-        });
-    });
-});
+        }, onError);
+    }, onError);
+}, onError);
