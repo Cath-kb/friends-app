@@ -2,6 +2,20 @@ const button = document.querySelector('button');
 const input = document.querySelector('input');
 const replies = document.querySelector('.replies');
 
+const photoInput = document.getElementById('photo-input');
+
+photoInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    const types = ['image/jpeg', 'image/gif', 'image/png'];
+
+    if (!file || !types.includes(file.type)) {
+        e.target.value = null;
+        throw new TypeError('Wrong type of file');
+    }
+
+    uploadPhoto(file);
+});
+
 button.addEventListener('click', addReply);
 input.addEventListener('keydown', (e) => {
     if (e.which == 13) {
@@ -11,6 +25,10 @@ input.addEventListener('keydown', (e) => {
 
 function onError(e) {
     throw new Error(e.message);
+}
+
+function uploadPhoto(data) {
+
 }
 
 function addReply() {
@@ -68,18 +86,32 @@ function drawFriends(friendList) {
     });
 }
 
-function get(url, callback) {
+function post(params) {
+    const xhr = new XMLHttpRequest();
+
+    let formData = new FormData();
+    formData.append('file', params.data);
+
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            resolve(JSON.parse(xhr.responseText));
+        }
+    };
+
+    xhr.open('POST', params.url, true);
+    xhr.send(formData);
+}
+
+function get(url, resolve, reject) {
     const xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange = () => {
         if (xhr.readyState == 4 && xhr.status == 200) {
-            callback(JSON.parse(xhr.responseText));
+            resolve(JSON.parse(xhr.responseText));
         }
     };
-    
-    xhr.onerror = (e) => {
-        onError(e)
-    };
+
+    xhr.onerror = reject;
 
     xhr.open('GET', url, true);
     xhr.send(null);
