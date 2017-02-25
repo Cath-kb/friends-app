@@ -152,3 +152,24 @@ get('/photos', (response) => {
         }, onError);
     }, onError);
 }, onError);
+
+let p1 = new Promise(function(resolve, reject) {
+    setTimeout(someFunc, 1500);
+    function someFunc() {
+        if(true) {
+            resolve(true);
+        } else {
+            reject()
+        }
+    }
+});
+
+p1.then(onResolve, onReject);
+
+function onResolve(response) {
+    console.log('onResolve: ', response);
+}
+
+function onReject(response) {
+    console.log('onReject: ', response);
+}
